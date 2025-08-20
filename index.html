@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quick Loans — Sri Lanka</title>
+  <meta name="theme-color" content="#0f172a">
+  <style>
+    /* ===== Design Tokens ===== */
+    :root {
+      --bg: #0b1220;             /* page background (hero) */
+      --surface: #0f172a;         /* appbar / toolbar */
+      --card: #ffffff;            /* cards */
+      --text: #0f172a;            /* primary text */
+      --muted: #64748b;           /* secondary text */
+      --brand-1: #2563eb;         /* blue */
+      --brand-2: #06b6d4;         /* cyan */
+      --accent: #22c55e;          /* green for CTAs */
+      --ring: rgba(37, 99, 235, .25);
+      --radius: 16px;
+      --shadow-xl: 0 20px 30px rgba(2,6,23,.2), 0 6px 10px rgba(2,6,23,.18);
+      --shadow: 0 8px 16px rgba(2,6,23,.12);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root { --card: #0b1220; --text:#e5e7eb; --muted:#9aa5b1; }
+      body { background: #050a16; }
+      .card { border: 1px solid rgba(148,163,184,.12); }
+    }
+
+    /* ===== Base ===== */
+    * { box-sizing: border-box } 
+    html, body { height: 100% }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 80% -100px, rgba(59,130,246,.25), transparent 60%),
+        radial-gradient(900px 500px at -10% -100px, rgba(14,165,233,.25), transparent 60%),
+        linear-gradient(180deg, #0b1220 0%, #0b1220 28%, #f8fafc 28%, #f8fafc 100%);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a { color: inherit }
+    img { display: block; max-width: 100% }
+    button { font: inherit }
+
+    /* ===== App Bar ===== */
+    .appbar {
+      position: sticky; top: 0; z-index: 50;
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: center; gap: 12px;
+      padding: 12px clamp(12px, 3vw, 24px);
+      background: linear-gradient(180deg, var(--surface), rgba(15,23,42,.9));
+      backdrop-filter: saturate(1.4) blur(8px);
+      border-bottom: 1px solid rgba(148,163,184,.15);
+      color: #dbeafe;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .brand .logo {
+      width: 36px; height: 36px; border-radius: 10px; 
+      background: radial-gradient(120% 120% at 0% 0%, var(--brand-2), var(--brand-1));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.15), 0 6px 18px rgba(59,130,246,.35);
+    }
+    .brand h1 {
+      margin: 0; font-size: clamp(16px, 2.2vw, 22px); font-weight: 700; letter-spacing: .2px;
+    }
+
+    .toolbar { display: flex; align-items: center; gap: 8px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 12px; border-radius: 999px; cursor: pointer;
+      background: rgba(2,6,23,.3); color:#e5e7eb; border: 1px solid rgba(148,163,184,.24);
+      transition: .2s ease; user-select: none;
+    }
+    .chip[data-active="true"]{ background: #1e293b; border-color: #60a5fa; }
+
+    /* ===== Hero ===== */
+    .hero {
+      max-width: 1100px; margin: 18px auto 0; padding: 0 clamp(12px, 3vw, 24px) 24px;
+      color: #e5f0ff;
+    }
+    .hero h2 {
+      font-size: clamp(24px, 4.4vw, 40px); line-height: 1.1; margin: 4px 0 8px;
+      letter-spacing: -0.4px;
+    }
+    .sub { color: #cfe0ff; font-size: clamp(14px, 2vw, 16px); opacity: .95 }
+
+    .notice {
+      margin-top: 16px; display:flex; gap:12px; align-items:flex-start;
+      background: rgba(56,189,248,.12);
+      border: 1px dashed rgba(125,211,252,.6);
+      color: #e0f2fe; padding: 12px 14px; border-radius: 12px;
+    }
+    .notice svg { flex: 0 0 auto }
+
+    /* ===== Filters Panel ===== */
+    .filters {
+      max-width: 1100px; margin: 18px auto 0; padding: 0 clamp(12px,3vw,24px) 18px;
+      display: grid; grid-template-columns: 1fr; gap: 10px;
+    }
+
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
+
+    .field {
+      display: grid; gap: 6px; align-items: start; min-width: 200px;
+      background: #fff; border: 1px solid rgba(2,6,23,.08); border-radius: 12px; padding: 10px 12px;
+      box-shadow: var(--shadow);
+    }
+    @media (prefers-color-scheme: dark){
+      .field { background: #0b1220; border-color: rgba(148,163,184,.18); }
+    }
+    .field label{ font-size: 12px; letter-spacing: .2px; color: var(--muted) }
+    .field input[type="range"] { width: min(480px, 70vw) }
+    .pillbar { display:flex; gap:8px; flex-wrap: wrap }
+
+    .pill {
+      background: #eef2ff; color:#1e293b; border: 1px solid rgba(37,99,235,.25);
+      padding: 8px 12px; border-radius: 999px; cursor: pointer; transition: .18s ease;
+    }
+    .pill[aria-pressed="true"] { background: #dbeafe; outline: 2px solid #93c5fd }
+
+    .kpi { color: var(--muted); font-size: 13px }
+
+    .btn-reset { margin-left: auto; border: none; background: transparent; color: #3b82f6; cursor:pointer; padding: 8px 10px; border-radius: 8px }
+    .btn-reset:hover { text-decoration: underline }
+
+    /* ===== Cards Grid ===== */
+    .grid {
+      max-width: 1100px; margin: 8px auto 24px; padding: 0 clamp(12px,3vw,24px);
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;
+    }
+
+    .card {
+      position: relative; overflow: hidden; border-radius: var(--radius);
+      background: var(--card); box-shadow: var(--shadow); border: 1px solid rgba(2,6,23,.06);
+      display: grid; gap: 10px; padding: 14px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-xl); border-color: rgba(37,99,235,.24) }
+
+    .badge {
+      position: absolute; top: 12px; left: 12px;
+      background: linear-gradient(90deg, #16a34a, #22c55e);
+      color: #fff; padding: 6px 10px; font-weight: 700; font-size: 12px; border-radius: 999px;
+      letter-spacing: .3px; box-shadow: 0 6px 16px rgba(22,163,74,.35);
+    }
+    .badge.alt { background: linear-gradient(90deg, #eab308, #f59e0b) }
+
+    .brandbar { display:flex; align-items:center; gap: 10px; }
+    .brandbar img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background:#f1f5f9; }
+    .brandbar .name { font-weight: 800; letter-spacing: .2px }
+    .features { display:grid; gap: 6px; margin: 2px 0 8px; color: var(--muted); font-size: 14px }
+    .features strong { color: var(--text) }
+
+    .cta {
+      display:flex; gap: 10px; align-items:center; margin-top: 2px;
+    }
+    .cta a {
+      flex:1; text-align:center; text-decoration:none; font-weight: 800;
+      background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+      color:#fff; padding: 12px 14px; border-radius: 12px; box-shadow: 0 10px 20px rgba(37,99,235,.35);
+      transition: transform .15s ease, box-shadow .15s ease; will-change: transform;
+    }
+    .cta a:active { transform: scale(.98) }
+
+    .secondary {
+      border: 1px solid rgba(2,6,23,.12); background: transparent; color: var(--text);
+      padding: 10px 12px; border-radius: 12px; font-weight: 700; cursor: pointer;
+    }
+
+    .meta { display:flex; justify-content: space-between; align-items:center; margin-top: 6px; color: var(--muted); font-size: 12px }
+
+    /* ===== Empty State ===== */
+    .empty { display:none; text-align: center; color: var(--muted); padding: 24px }
+    .empty.show { display:block }
+
+    /* ===== How it works ===== */
+    .how {
+      max-width: 900px; margin: 6px auto 68px; padding: 0 clamp(12px,3vw,24px);
+      background: linear-gradient(0deg, rgba(37,99,235,.06), rgba(37,99,235,0));
+      border: 1px solid rgba(37,99,235,.12); border-radius: 16px; box-shadow: var(--shadow);
+    }
+    .how h3 {
+      margin: 16px 16px 4px; font-size: clamp(18px, 2.6vw, 22px)
+    }
+    .how ol { margin: 0 24px 20px; padding-left: 20px; line-height: 1.6 }
+    .how .si { opacity:.9; color:#0b6 }
+    .how p.note { margin: 0 16px 16px; color: var(--muted); font-size: 13px }
+
+    /* ===== Footer ===== */
+    footer { 
+      max-width: 1100px; margin: 0 auto; padding: 18px clamp(12px,3vw,24px) 60px; 
+      color: var(--muted); font-size: 12px;
+    }
+
+    /* ===== Utilities ===== */
+    .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0 }
+
+    @media (min-width: 720px){ .filters { grid-template-columns: .9fr .1fr } }
+  </style>
+</head>
+<body>
+  <!-- App Bar -->
+  <header class="appbar" role="banner">
+    <div class="brand" aria-label="Quick Loans Sri Lanka">
+      <div class="logo" aria-hidden="true"></div>
+      <h1>Quick Loans • Sri Lanka</h1>
+    </div>
+    <div class="toolbar">
+      <button class="chip" id="langEn" data-active="true" aria-pressed="true">EN</button>
+      <button class="chip" id="langSi" aria-pressed="false">සිංහල</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" aria-labelledby="headline">
+    <h2 id="headline">💸 Best Loan Offers • 💸 ශ්‍රී ලංකාවේ හොඳම ණය පහසුකම්</h2>
+    <p class="sub" id="subtext">Compare, choose, and apply in minutes. No hidden fees. Fast decisions.</p>
+
+    <div class="notice" role="note" aria-live="polite">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+      <span id="noticeText"><strong>Tip:</strong> If one company doesn't approve your loan, try others. Each lender has different rules.</span>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="filters" aria-label="Filters">
+    <div class="field" role="group" aria-labelledby="amountLabel">
+      <label id="amountLabel">Desired amount (LKR)</label>
+      <input id="amountRange" type="range" min="3000" max="200000" step="1000" value="50000" aria-valuemin="3000" aria-valuemax="200000" aria-valuenow="50000">
+      <div class="kpi" id="amountValue">Up to LKR 50,000</div>
+    </div>
+
+    <div class="field" role="group" aria-labelledby="quickLabel">
+      <label id="quickLabel">Quick filters</label>
+      <div class="pillbar" id="quickPills">
+        <button class="pill" data-filter="all" aria-pressed="true">All</button>
+        <button class="pill" data-filter="zero">0% first loan</button>
+        <button class="pill" data-filter="instant">Instant (≤ 15m)</button>
+        <button class="pill" data-filter="hour">≤ 1 hour</button>
+      </div>
+    </div>
+
+    <button class="btn-reset" id="resetBtn" title="Reset filters">Reset</button>
+  </section>
+
+  <!-- Cards Grid -->
+  <main class="grid" id="grid" aria-live="polite">
+
+    <!-- Card 1 -->
+    <article class="card" data-min="0" data-max="100000" data-approval="1" data-zero="1">
+      <span class="badge">0% for 14 days</span>
+      <div class="brandbar">
+        <img src="https://s.iimg.su/s/09/A8zHYc7bYLl2h7m7u1zUoarTj8xWbiHG3wgKGf5H.png" alt="ceyLoan.lk logo" loading="lazy" width="44" height="44">
+        <div>
+          <div class="name">ceyLoan.lk</div>
+          <div class="meta">Age 20–60 · Instant approval</div>
+        </div>
+      </div>
+      <div class="features">
+        <div><strong>Loan:</strong> Up to LKR 100,000</div>
+        <div><strong>Term:</strong> First 14 days at 0%</div>
+      </div>
+      <div class="cta">
+        <a href="https://track.leadsmatcher.com/click?pid=7515&offer_id=677" target="_blank" rel="noopener" aria-label="Apply at ceyLoan.lk">Get Money</a>
+        <button class="secondary" data-more>Details</button>
+      </div>
+      <div class="meta"><span>NIC required</span><span>⚡ Instant</span></div>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="card" data-min="3000" data-max="100000" data-approval="60" data-zero="0">
+      <div class="brandbar">
+        <img src="https://s.iimg.su/s/09/0mOShG4MVOHDXz4HM3jG5LGdXYefxXchdLScWJeK.png" alt="CashX.lk logo" loading="lazy" width="44" height="44">
+        <div>
+          <div class="name">CashX.lk</div>
+          <div class="meta">Age 18+ · Within 1 hour</div>
+        </div>
+      </div>
+      <div class="features">
+        <div><strong>Loan:</strong> LKR 3,000 – 100,000</div>
+        <div><strong>First term:</strong> 14 days</div>
+      </div>
+      <div class="cta">
+        <a href="https://go.lead-cash.com/click?pid=1141&offer_id=288" target="_blank" rel="noopener" aria-label="Apply at CashX.lk">Get Money</a>
+        <button class="secondary" data-more>Details</button>
+      </div>
+      <div class="meta"><span>NIC + phone</span><span>⏱ ≤ 60m</span></div>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="card" data-min="5000" data-max="50000" data-approval="30" data-zero="1">
+      <span class="badge">0% First Loan</span>
+      <div class="brandbar">
+        <img src="https://i.ibb.co/hpNC6Zb/fafafa.png" alt="LoanPlus.lk logo" loading="lazy" width="44" height="44">
+        <div>
+          <div class="name">LoanPlus.lk</div>
+          <div class="meta">Age 20–60 · Fast approval</div>
+        </div>
+      </div>
+      <div class="features">
+        <div><strong>Loan:</strong> LKR 5,000 – 50,000</div>
+        <div><strong>Term:</strong> 5–30 days</div>
+      </div>
+      <div class="cta">
+        <a href="https://link.lead-cash.com/click?pid=1141&offer_id=430" target="_blank" rel="noopener" aria-label="Apply at LoanPlus.lk">Get Money</a>
+        <button class="secondary" data-more>Details</button>
+      </div>
+      <div class="meta"><span>NIC</span><span>⚡ Fast</span></div>
+    </article>
+
+    <!-- Card 4 -->
+    <article class="card" data-min="0" data-max="100000" data-approval="30" data-zero="1">
+      <span class="badge">0% First Loan</span>
+      <div class="brandbar">
+        <img src="https://i.ibb.co/YT4hs6d3/fafafa-3.png" alt="Ceyloan.lk logo" loading="lazy" width="44" height="44">
+        <div>
+          <div class="name">Ceyloan.lk</div>
+          <div class="meta">Age 21–60 · Employment required</div>
+        </div>
+      </div>
+      <div class="features">
+        <div><strong>Loan:</strong> Up to LKR 100,000</div>
+        <div><strong>Requirements:</strong> NIC + Employment</div>
+      </div>
+      <div class="cta">
+        <a href="https://link.lead-cash.com/click?pid=1141&offer_id=576" target="_blank" rel="noopener" aria-label="Apply at Ceyloan.lk">Get Money</a>
+        <button class="secondary" data-more>Details</button>
+      </div>
+      <div class="meta"><span>NIC + job</span><span>⚡ Fast</span></div>
+    </article>
+
+    <!-- Card 5 -->
+    <article class="card" data-min="5000" data-max="200000" data-approval="30" data-zero="0">
+      <div class="brandbar">
+        <img src="https://i.ibb.co/Zz23H9vd/fafafa-2.png" alt="LoanPlus.lk logo" loading="lazy" width="44" height="44">
+        <div>
+          <div class="name">LoanPlus.lk</div>
+          <div class="meta">Age 20–60 · Flexible limits</div>
+        </div>
+      </div>
+      <div class="features">
+        <div><strong>Loan:</strong> LKR 5,000 – 200,000</div>
+        <div><strong>Term:</strong> 5–30 days</div>
+      </div>
+      <div class="cta">
+        <a href="https://go.lead-cash.com/click?pid=1141&offer_id=577" target="_blank" rel="noopener" aria-label="Apply at LoanPlus.lk">Get Money</a>
+        <button class="secondary" data-more>Details</button>
+      </div>
+      <div class="meta"><span>NIC</span><span>⏱ ~ 30m</span></div>
+    </article>
+
+    <!-- Card 6 -->
+    <article class="card" data-min="10000" data-max="200000" data-approval="15" data-zero="1">
+      <span class="badge alt">0% First Loan</span>
+      <div class="brandbar">
+        <img src="https://s.iimg.su/s/09/eoLcRebVeZIIq8QgTI1Zd0sVDHngABxx61ct59fO.png" alt="CashX.lk logo" loading="lazy" width="44" height="44">
+        <div>
+          <div class="name">CashX.lk</div>
+          <div class="meta">Age 20–60 · 10–15 minutes</div>
+        </div>
+      </div>
+      <div class="features">
+        <div><strong>Loan:</strong> LKR 10,000 – 200,000</div>
+        <div><strong>Approval:</strong> 10–15 minutes</div>
+      </div>
+      <div class="cta">
+        <a href="https://link.lead-cash.com/click?pid=1141&offer_id=400" target="_blank" rel="noopener" aria-label="Apply at CashX.lk">Get Money</a>
+        <button class="secondary" data-more>Details</button>
+      </div>
+      <div class="meta"><span>NIC</span><span>⚡ Instant</span></div>
+    </article>
+
+  </main>
+
+  <div class="empty" id="empty">No results match your filters. Try adjusting the amount or quick filters.</div>
+
+  <!-- How it works -->
+  <section class="how" aria-labelledby="howTitle">
+    <h3 id="howTitle">How to Get a Loan</h3>
+    <ol id="howList">
+      <li>Choose one of the companies above.</li>
+      <li>Click <em>Get Money</em> and complete the form.</li>
+      <li>If approved, funds usually arrive in 15–60 minutes.</li>
+      <li>Not approved? Try other offers; rules vary by lender.</li>
+    </ol>
+    <p class="note" id="disclaimer">This website compares third‑party offers. Terms, limits and approval times are provided by lenders and may change. Always review official terms before applying.</p>
+  </section>
+
+  <footer>
+    © 2025 · Your data is protected · Made for Sri Lanka
+  </footer>
+
+  <script>
+    // ===== Small app-like interactions =====
+    const $ = (s, c=document)=>c.querySelector(s);
+    const $$ = (s, c=document)=>[...c.querySelectorAll(s)];
+
+    const amount = $('#amountRange');
+    const amountValue = $('#amountValue');
+    const grid = $('#grid');
+    const pills = $$('#quickPills .pill');
+    const resetBtn = $('#resetBtn');
+    const empty = $('#empty');
+
+    let quickFilter = 'all';
+
+    const fmt = (n)=>`LKR ${n.toLocaleString('en-LK')}`;
+
+    function updateAmountLabel(){
+      const v = Number(amount.value);
+      amountValue.textContent = `Up to ${fmt(v)}`;
+    }
+
+    function applyFilters(){
+      const maxWant = Number(amount.value);
+
+      let visible = 0;
+      $$('.card', grid).forEach(card=>{
+        const min = Number(card.dataset.min||0);
+        const max = Number(card.dataset.max||0);
+        const approval = Number(card.dataset.approval||60); // minutes
+        const isZero = card.dataset.zero === '1';
+
+        // Amount match
+        const amountOk = max >= maxWant && maxWant >= min;
+
+        // Quick filter match
+        let quickOk = true;
+        if(quickFilter === 'zero') quickOk = isZero;
+        if(quickFilter === 'instant') quickOk = approval <= 15;
+        if(quickFilter === 'hour') quickOk = approval <= 60;
+
+        const show = amountOk && quickOk;
+        card.style.display = show ? 'grid' : 'none';
+        if(show) visible++;
+      });
+
+      empty.classList.toggle('show', visible === 0);
+    }
+
+    amount.addEventListener('input', ()=>{ updateAmountLabel(); applyFilters(); });
+
+    pills.forEach(p=>{
+      p.addEventListener('click', ()=>{
+        pills.forEach(x=>x.setAttribute('aria-pressed','false'));
+        p.setAttribute('aria-pressed','true');
+        quickFilter = p.dataset.filter;
+        applyFilters();
+      })
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      amount.value = 50000; updateAmountLabel();
+      quickFilter = 'all';
+      pills.forEach(x=>x.setAttribute('aria-pressed', x.dataset.filter==='all' ? 'true' : 'false'));
+      applyFilters();
+    });
+
+    // Expandable details (placeholder; can be wired to real content later)
+    $$('[data-more]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        alert('After clicking “Get Money”, you\'ll see exact terms on the lender website.');
+      })
+    });
+
+    // Language toggle (basic EN ↔ SI for key lines)
+    const langEn = $('#langEn');
+    const langSi = $('#langSi');
+    const i18n = {
+      en: {
+        sub: 'Compare, choose, and apply in minutes. No hidden fees. Fast decisions.',
+        tip: 'If one company doesn\'t approve your loan, try others. Each lender has different rules.',
+        howT: 'How to Get a Loan',
+        how: [
+          'Choose one of the companies above.',
+          'Click Get Money and complete the form.',
+          'If approved, funds usually arrive in 15–60 minutes.',
+          'Not approved? Try other offers; rules vary by lender.'
+        ],
+        disc: 'This website compares third‑party offers. Terms, limits and approval times are provided by lenders and may change. Always review official terms before applying.'
+      },
+      si: {
+        sub: 'මිනිත්තු කිහිපයේම තෝරා ඉල්ලන්න. සඟවා ඇති ගාස්තු නොමැත. වේගවත් තීරණ.',
+        tip: 'එක් සමාගමක් ඔබගේ ණය ඉල්ලීම අනුමත නොකරයි නම් අනෙකත් අත්හදා බලන්න. සෑම පොළීකරුවෙකුටම වෙනස් නීති ඇත.',
+        howT: 'කෙසේ ණය ලබාගන්නේද',
+        how: [
+          'ඉහත ලැයිස්තුවෙන් සමාගමක් තෝරන්න.',
+          '“Get Money” ක්ලික් කර යෙදුම පුරවන්න.',
+          'අනුමත වූ පසු විනාඩි 15–60 කට තුළ මුදල් ලැබිය හැක.',
+          'අනුමත නොවූවොත් වෙනත් යෝජනා අත්හදා බලන්න.'
+        ],
+        disc: 'මෙම වෙබ් අඩවිය තුන්කඩි යෝජනා සසඳයි. කොන්දේසි සහ කාලය ණය දෙන ආයතන විසින් ඉදිරිපත් කරන අතර වෙනස් විය හැක. ඉල්ලුමට පෙර නිල කොන්දේසි බලන්න.'
+      }
+    };
+
+    function setLang(which){
+      const l = i18n[which];
+      $('#subtext').textContent = l.sub;
+      $('#noticeText').innerHTML = `<strong>Tip:</strong> ${l.tip}`;
+      $('#howTitle').textContent = l.howT;
+      const howList = $('#howList');
+      howList.innerHTML = l.how.map(x=>`<li>${x}</li>`).join('');
+      $('#disclaimer').textContent = l.disc;
+      langEn.dataset.active = String(which==='en');
+      langSi.dataset.active = String(which==='si');
+      langEn.setAttribute('aria-pressed', which==='en');
+      langSi.setAttribute('aria-pressed', which==='si');
+    }
+
+    langEn.addEventListener('click', ()=> setLang('en'));
+    langSi.addEventListener('click', ()=> setLang('si'));
+
+    // Init
+    updateAmountLabel();
+    applyFilters();
+
+    // Respect reduced motion for potential future animations
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  </script>
+</body>
+</html>
